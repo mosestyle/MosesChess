@@ -2,7 +2,6 @@ import React, { lazy, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import { useAltcha } from "@/apps/features/analysis/hooks/useAltcha";
 import PageWrapper from "@/components/layout/PageWrapper";
 import { removeDefaultConsentLink } from "@/lib/consent";
 
@@ -18,11 +17,8 @@ const root = ReactDOM.createRoot(
 );
 
 function App() {
-    const executeCaptcha = useAltcha();
-
     useEffect(() => {
         removeDefaultConsentLink();
-        executeCaptcha();
     }, []);
 
     return <BrowserRouter>
