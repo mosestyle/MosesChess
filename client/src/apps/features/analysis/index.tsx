@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import PageWrapper from "@/components/layout/PageWrapper";
 import { removeDefaultConsentLink } from "@/lib/consent";
@@ -19,12 +20,17 @@ function App() {
         removeDefaultConsentLink();
     }, []);
 
-    return <PageWrapper
-        className={styles.wrapper}
-        footerClassName={styles.footer}
-    >
-        <Analysis />
-    </PageWrapper>;
+    return <BrowserRouter basename="/MosesChess">
+        <PageWrapper
+            className={styles.wrapper}
+            footerClassName={styles.footer}
+        >
+            <Routes>
+                <Route path="/" element={<Analysis />} />
+                <Route path="/analysis" element={<Analysis />} />
+            </Routes>
+        </PageWrapper>
+    </BrowserRouter>;
 }
 
 root.render(<App />);
