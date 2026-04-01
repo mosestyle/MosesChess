@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 
 import AnalysisTab from "@analysis/constants/AnalysisTab";
@@ -12,7 +12,6 @@ import StateTreeTraverser from "@/components/chess/StateTreeTraverser";
 import TabBar from "./TabBar";
 import AnalysisProgress from "./AnalysisProgress";
 import RealtimeEngineArea from "./RealtimeEngineArea";
-
 import GameSelection from "./GameSelection";
 import GameReport from "./GameReport";
 import GameAnalysis from "./GameAnalysis";
@@ -39,7 +38,7 @@ function AnalysisPanel({
     );
 
     const { activeTab } = useAnalysisTabStore();
-    
+
     return <div
         className={`${styles.wrapper} ${className}`}
         style={style}
@@ -49,7 +48,9 @@ function AnalysisPanel({
                 {t("title")}
             </div>
 
-            <OptionsToolbar/>
+            <Suspense fallback={<div />}>
+                <OptionsToolbar />
+            </Suspense>
 
             {gameAnalysisOpen && <TabBar/>}
 
