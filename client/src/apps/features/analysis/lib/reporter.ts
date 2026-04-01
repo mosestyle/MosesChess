@@ -2,10 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import { clone } from "lodash-es";
 
 import AnalysisOptions from "shared/lib/reporter/types/AnalysisOptions";
-import {
-    GameAnalysis,
-    SerializedGameAnalysis
-} from "shared/types/game/GameAnalysis";
+import { getGameAnalysis } from "shared/lib/reporter/report";
+import { GameAnalysis } from "shared/types/game/GameAnalysis";
 import {
     StateTreeNode,
     serializeNode,
@@ -16,43 +14,30 @@ import APIResponse from "@/types/APIResponse";
 export async function analyseStateTree(
     rootNode: StateTreeNode,
     options?: AnalysisOptions
-): APIResponse<{ gameAnalysis: GameAnalysis }> {
-    const reportURL = "/api/analysis/analyse"
-        + `?brilliant=${String(options?.includeBrilliant)}`
-        + `&critical=${String(options?.includeCritical)}`
-        + `&theory=${String(options?.includeTheory)}`;
+): Promise<APIResponse<{ gameAnalysis: GameAnalysis }>> {
+    try {
+        const serializedRoot = serializeNode(rootNode);
+        const clonedRoot = deserializeNode(serializedRoot, rootNode);
 
-    const reportResponse = await fetch(reportURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-            serializeNode(rootNode)
-        )
-    });
+        const gameAnalysis = getGameAnalysis(clonedRoot, {
+            includeBrilliant: options?.includeBrilliant,
+            includeCritical: options?.includeCritical,
+            includeTheory: options?.includeTheory
+        });
 
-    if (!reportResponse.ok)
-        return { status: reportResponse.status };
-
-    const serializedAnalysis: SerializedGameAnalysis = (
-        await reportResponse.json()
-    );
-
-    return {
-        status: reportResponse.status,
-        gameAnalysis: {
-            ...serializedAnalysis,
-            stateTree: deserializeNode(
-                serializedAnalysis.stateTree,
-                rootNode
-            )
-        }
-    };
+        return {
+            status: StatusCodes.OK,
+            gameAnalysis
+        };
+    } catch {
+        return { status: StatusCodes.INTERNAL_SERVER_ERROR };
+    }
 }
 
 export async function analyseNode(
     node: StateTreeNode,
     options?: AnalysisOptions
-): APIResponse<{ node: StateTreeNode }> {
+): Promise<APIResponse<{ node: StateTreeNode }>> {
     if (!node.parent)
         return { status: StatusCodes.BAD_REQUEST };
 
