@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-import PageWrapper from "@/components/layout/PageWrapper";
-import { removeDefaultConsentLink } from "@/lib/consent";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ToastContainer } from "react-toastify";
 
 import Analysis from "./pages/Analysis";
-import * as styles from "./index.module.css";
 
 import "@/i18n";
 import "@/index.css";
@@ -15,22 +13,22 @@ const root = ReactDOM.createRoot(
     document.querySelector(".root")!
 );
 
-function App() {
-    useEffect(() => {
-        removeDefaultConsentLink();
-    }, []);
+const queryClient = new QueryClient();
 
-    return <BrowserRouter basename="/MosesChess">
-        <PageWrapper
-            className={styles.wrapper}
-            footerClassName={styles.footer}
-        >
-            <Routes>
-                <Route path="/" element={<Analysis />} />
-                <Route path="/analysis" element={<Analysis />} />
-            </Routes>
-        </PageWrapper>
-    </BrowserRouter>;
+function App() {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter basename="/MosesChess">
+                <Suspense fallback={<div />}>
+                    <Routes>
+                        <Route path="/" element={<Analysis />} />
+                        <Route path="/analysis" element={<Analysis />} />
+                    </Routes>
+                    <ToastContainer />
+                </Suspense>
+            </BrowserRouter>
+        </QueryClientProvider>
+    );
 }
 
 root.render(<App />);
