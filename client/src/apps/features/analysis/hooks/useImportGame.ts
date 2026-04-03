@@ -6,10 +6,6 @@ import useGameSelector, { SelectedGame } from "@/hooks/useGameSelector";
 import useAnalysisGameStore from "@analysis/stores/AnalysisGameStore";
 import useAnalysisBoardStore from "@analysis/stores/AnalysisBoardStore";
 import parseStateTree from "shared/lib/stateTree/parse";
-import {
-    getChessComProfileImages,
-    isGameFromChessCom
-} from "@/lib/profileImages";
 import getChessComGames from "@/lib/games/chessCom";
 import getLichessGames from "@/lib/games/lichess";
 import parsePgn from "@/lib/games/pgn";
